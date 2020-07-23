@@ -1,7 +1,9 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { FiArrowLeft, FiMail, FiUser, FiLock } from 'react-icons/fi';
+import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
+import getValidationErrors from '../../utils/getValidationErrors';
 
 import logoImg from '../../assets/logo.svg';
 
@@ -11,9 +13,15 @@ import Input from '../../components/Input';
 import { Container, Content, Background } from './styles';
 
 const Signup: React.FC = () => {
+  const formRef = useRef<FormHandles>(null);
+
+  // console.log(formRef);
+
   const handleSubmit = useCallback(async (data: Record<string, unknown>) => {
     // console.log(data);
     try {
+      formRef.current?.setErrors({});
+
       const schema = Yup.object().shape({
         name: Yup.string().required('Nome obrigatório'),
         email: Yup.string()
@@ -27,6 +35,14 @@ const Signup: React.FC = () => {
       });
     } catch (err) {
       console.log(err);
+
+      const errors = getValidationErrors(err);
+
+      // formRef.current?.setErrors({
+      //   name: 'Nome obrigatorio',
+      // });
+
+      formRef.current?.setErrors(errors);
     }
   }, []);
 
@@ -37,7 +53,7 @@ const Signup: React.FC = () => {
         <img src={logoImg} alt="GoBarber" />
 
         {/* <Form initialData={{ name: 'Seu Nome' }} onSubmit={handleSubmit}> */}
-        <Form onSubmit={handleSubmit}>
+        <Form ref={formRef} onSubmit={handleSubmit}>
           <h1>Faça seu cadastro</h1>
 
           <Input name="name" icon={FiUser} placeholder="Nome" />
