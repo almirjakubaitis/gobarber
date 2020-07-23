@@ -28,6 +28,7 @@ export const Container = styled.div<ContainerProps>`
     props.isErrored &&
     css`
       border-color: #c53030;
+      color: #c53030;
     `}
 
   ${props =>
