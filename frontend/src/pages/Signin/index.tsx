@@ -4,7 +4,7 @@ import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 
-import AuthContext from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 import getValidationErrors from '../../utils/getValidationErrors';
 
 import logoImg from '../../assets/logo.svg';
@@ -14,41 +14,57 @@ import Input from '../../components/Input';
 
 import { Container, Content, Background } from './styles';
 
+interface SignInFormData {
+  email: string;
+  password: string;
+}
+
 const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
 
   // console.log(formRef);
 
-  const { name } = useContext(AuthContext);
-  console.log(name);
+  // api de contexto
+  // const { name } = useContext(AuthContext);
+  // console.log(name);
 
-  const handleSubmit = useCallback(async (data: Record<string, unknown>) => {
-    // console.log(data);
-    try {
-      formRef.current?.setErrors({});
+  const { signIn } = useContext(AuthContext);
 
-      const schema = Yup.object().shape({
-        email: Yup.string()
-          .required('E-mail obrigatório')
-          .email('Digite um e-mail válido'),
-        password: Yup.string().required('Senha obrigatória'),
-      });
+  const handleSubmit = useCallback(
+    async (data: SignInFormData) => {
+      // console.log(data);
+      try {
+        formRef.current?.setErrors({});
 
-      await schema.validate(data, {
-        abortEarly: false,
-      });
-    } catch (err) {
-      // console.log(err);
+        const schema = Yup.object().shape({
+          email: Yup.string()
+            .required('E-mail obrigatório')
+            .email('Digite um e-mail válido'),
+          password: Yup.string().required('Senha obrigatória'),
+        });
 
-      const errors = getValidationErrors(err);
+        await schema.validate(data, {
+          abortEarly: false,
+        });
 
-      // formRef.current?.setErrors({
-      //   name: 'Nome obrigatorio',
-      // });
+        signIn({
+          email: data.email,
+          password: data.password,
+        });
+      } catch (err) {
+        // console.log(err);
 
-      formRef.current?.setErrors(errors);
-    }
-  }, []);
+        const errors = getValidationErrors(err);
+
+        // formRef.current?.setErrors({
+        //   name: 'Nome obrigatorio',
+        // });
+
+        formRef.current?.setErrors(errors);
+      }
+    },
+    [signIn],
+  );
 
   return (
     <Container>
