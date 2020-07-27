@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useState } from 'react';
+import React, { createContext, useCallback, useState, useContext } from 'react';
 import api from '../services/api';
 
 interface AuthState {
@@ -16,16 +16,14 @@ interface AuthContextData {
   signIn(credentials: SingInCredentials): Promise<void>;
 }
 
-export const AuthContext = createContext<AuthContextData>(
-  {} as AuthContextData,
-);
+const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 // variável inicialmente com valor vazio -> forçando {} as AuthContext
 // para remover o erro do Typescript
 
 // Outra forma de fazer, mas que poderia dar erros a frente
 // const authContext = createContext<AuthContext | null>(null);
 
-export const AuthProvider: React.FC = ({ children }) => {
+const AuthProvider: React.FC = ({ children }) => {
   const [data, setData] = useState<AuthState>(() => {
     const token = localStorage.getItem('@Gobarber:token');
     const user = localStorage.getItem('@Gobarber:user');
@@ -61,3 +59,15 @@ export const AuthProvider: React.FC = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+function useAuth(): AuthContextData {
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    throw new Error('useAuth must be used within a AuthProvider');
+  }
+
+  return context;
+}
+
+export { AuthProvider, useAuth };
