@@ -41,6 +41,7 @@ Gobarber - Gostack11 - Rocketseat: Projeto para desenvolver as habilidades FullS
  ## 💻 Tecnologias:
 
    - React Js
+   - React Native
    - Node.js
    - Typescript
 
