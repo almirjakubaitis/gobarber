@@ -24,7 +24,11 @@ interface InputRef {
   focus(): void;
 }
 
-const Input: React.RefForwardingComponent<InputRef, InputProps> = (
+// ForwardRefRenderFunction is now the Function
+
+// RefForwardingComponent is depricated
+
+const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
   {name, icon, ...rest},
   ref,
 ) => {
@@ -70,7 +74,7 @@ const Input: React.RefForwardingComponent<InputRef, InputProps> = (
   }, [fieldName, registerField]);
 
   return (
-    <Container isFocused={isFocused}>
+    <Container isFocused={isFocused} isErrored={!!error}>
       <Icon
         name={icon}
         size={20}
