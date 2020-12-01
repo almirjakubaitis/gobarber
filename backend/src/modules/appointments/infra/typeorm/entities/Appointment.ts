@@ -10,7 +10,7 @@ import {
 
 // Entity no typeorm é um model que será salvo no database
 
-import User from './User';
+import User from '@modules/users/infra/typeorm/entities/User';
 
 /**
  * Um para Um (OneToOne) -> Um usuário tem no máximo um agendamento
