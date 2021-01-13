@@ -6,3 +6,7 @@ temp/
 
 tmp/*
 !tmp/.gitkeep
+
+ormconfig.raspiberrypi.json
+ormconfig.json
+
