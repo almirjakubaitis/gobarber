@@ -69,7 +69,7 @@ describe('SendForgotPasswordEmail', () => {
     ).rejects.toBeInstanceOf(AppError);
   });
 
-  it('should be able to reset a user password if token is older than 2 hours', async () => {
+  it('should not be able to reset a user password if token is older than 2 hours', async () => {
     resetPassword = new ResetPasswordService(
       fakeUsersRepository,
       fakeUserTokensRepository,
@@ -84,16 +84,17 @@ describe('SendForgotPasswordEmail', () => {
 
     const { token } = await fakeUserTokensRepository.generate(user.id);
 
-    const generateHash = jest.spyOn(fakeHashProvider, 'generateHash');
+    jest.spyOn(Date, 'now').mockImplementationOnce(() => {
+      const customDate = new Date();
 
-    await resetPassword.execute({
-      password: '123321',
-      token,
+      return customDate.setHours(customDate.getHours() + 3);
     });
 
-    const updatedUser = await fakeUsersRepository.findById(user.id);
-
-    expect(generateHash).toHaveBeenLastCalledWith('123321');
-    expect(updatedUser?.password).toBe('123321');
+    await expect(
+      resetPassword.execute({
+        password: '123321',
+        token,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
   });
 });
