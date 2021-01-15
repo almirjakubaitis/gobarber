@@ -8,7 +8,7 @@ import User from '@modules/users/infra/typeorm/entities/User';
 // Princípio aplicado na aula
 // L > Liskov Substitution Principle
 
-class UsersRepository implements IUsersRepository {
+export default class FakeUsersRepository implements IUsersRepository {
   private users: User[] = [];
 
   public async findById(id: string): Promise<User | undefined> {
@@ -38,9 +38,7 @@ class UsersRepository implements IUsersRepository {
 
     this.users[findIndex] = user;
 
-    console.log(user);
+    // console.log(user);
     return user;
   }
 }
-
-export default UsersRepository;

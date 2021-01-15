@@ -14,12 +14,12 @@ describe('CreateUser', () => {
   it('should be able to create a new user', async () => {
     const fakeUsersRepository = new FakeUsersRepository();
     const fakeHashProvider = new FakeHashProvider();
-    const createUserService = new CreateUserService(
+    const createUser = new CreateUserService(
       fakeUsersRepository,
       fakeHashProvider,
     );
 
-    const user = await createUserService.execute({
+    const user = await createUser.execute({
       name: 'My Name',
       email: 'myemail@google.com',
       password: '123456',
@@ -35,12 +35,12 @@ describe('CreateUser', () => {
   it('should not be able to create a new user with same email from another', async () => {
     const fakeUsersRepository = new FakeUsersRepository();
     const fakeHashProvider = new FakeHashProvider();
-    const createUserService = new CreateUserService(
+    const createUser = new CreateUserService(
       fakeUsersRepository,
       fakeHashProvider,
     );
 
-    await createUserService.execute({
+    await createUser.execute({
       name: 'My Name',
       email: 'myemail@google.com',
       password: '123456',
@@ -49,7 +49,7 @@ describe('CreateUser', () => {
     // expect(appointment.id).toBe('039390-he3009');
 
     await expect(
-      createUserService.execute({
+      createUser.execute({
         name: 'My Name',
         email: 'myemail@google.com',
         password: '123456',
