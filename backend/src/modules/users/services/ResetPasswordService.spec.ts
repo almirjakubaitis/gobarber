@@ -47,18 +47,18 @@ describe('SendForgotPasswordEmail', () => {
     expect(updatedUser?.password).toBe('123321');
   });
 
-  it('should be able to reset a user password with a non-existing token', async () => {
+  it('should not be able to reset a user password with a non-existing token', async () => {
     await expect(
       resetPassword.execute({
-        password: 'password',
+        password: 'new password',
         token: 'invalid token',
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
 
-  it('should be able to reset a user password with a non-existing user', async () => {
+  it('should not be able to reset a user password with a non-existing user', async () => {
     const { token } = await fakeUserTokensRepository.generate(
-      'non-existing-user',
+      'non-existing-user-token',
     );
 
     await expect(

@@ -15,9 +15,6 @@ export default class UserToken {
   id: string;
 
   @Column()
-  name: string;
-
-  @Column()
   @Generated('uuid')
   token: string;
 
