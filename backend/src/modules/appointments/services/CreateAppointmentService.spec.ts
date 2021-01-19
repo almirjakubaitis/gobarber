@@ -8,15 +8,21 @@ import CreateAppointmentService from './CreateAppointmentService';
 
 // describe('categoria de testes')
 
+let fakeAppointmentRepository: FakeAppointmentRepository;
+let createAppointmentService: CreateAppointmentService;
+
 const providerId = '039390-he3009';
 
 describe('CreateAppointment', () => {
-  it('should be able to create a new appointment', async () => {
-    const fakeAppointmentRepository = new FakeAppointmentRepository();
-    const createAppointmentService = new CreateAppointmentService(
+  // beforeEach(() => {});
+  beforeEach(() => {
+    fakeAppointmentRepository = new FakeAppointmentRepository();
+    createAppointmentService = new CreateAppointmentService(
       fakeAppointmentRepository,
     );
+  });
 
+  it('should be able to create a new appointment', async () => {
     const appointment = await createAppointmentService.execute({
       date: new Date(),
       provider_id: providerId,
@@ -26,15 +32,10 @@ describe('CreateAppointment', () => {
     expect(appointment).toHaveProperty('id');
     expect(appointment).toHaveProperty('date');
   });
-});
 
-describe('CreateAppointment', () => {
+  //
+
   it('should not be able able to create two appointments at the same time', async () => {
-    const fakeAppointmentRepository = new FakeAppointmentRepository();
-    const createAppointmentService = new CreateAppointmentService(
-      fakeAppointmentRepository,
-    );
-
     const appointmentDate = new Date(2020, 4, 10, 11);
 
     await createAppointmentService.execute({
