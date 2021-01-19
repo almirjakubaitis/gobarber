@@ -1,10 +1,21 @@
 import nodemailer, { Transporter } from 'nodemailer';
-import IMailProvider from '@shared/container/providers/MailProvider/models/IMailerProvider';
+import { injectable, inject } from 'tsyringe';
 
+import IMailProvider from '@shared/container/providers/MailProvider/models/IMailerProvider';
+import ISendMailDTO from '@providers/MailProvider/dtos/ISendMailDTO';
+
+import IMailTemplateProvider from '@providers/MailTemplateProvider/models/IMailTemplateProvider';
+
+// Está sendo injetado um provider dentro do outro
+// O MailTemplate Provider esta sendo injeado aqui
+@injectable()
 export default class EtherealMailProvider implements IMailProvider {
   private client: Transporter;
 
-  constructor() {
+  constructor(
+    @inject('MailTemplateProvider')
+    private mailTemplateProvider: IMailTemplateProvider,
+  ) {
     nodemailer.createTestAccount().then(account => {
       const transporter = nodemailer.createTransport({
         host: account.smtp.host,
@@ -20,13 +31,24 @@ export default class EtherealMailProvider implements IMailProvider {
     });
   }
 
-  public async sendMail(to: string, body: string): Promise<void> {
+  public async sendMail({
+    to,
+    from,
+    subject,
+    templateData,
+  }: ISendMailDTO): Promise<void> {
     const message = await this.client.sendMail({
-      from: 'Equipe gobarver <equipe@gobarber.com>',
-      to,
-      subject: 'Recuperação de senha',
-      text: body,
-      // html: '<p><b>Hello</b> to myself!</p>',
+      from: {
+        name: from?.name || 'Equipe goBarber',
+        address: from?.email || 'equipe@gobarber.com',
+      },
+      to: {
+        name: to.name,
+        address: to.email,
+      },
+      subject,
+      // text: 'teste',
+      html: await this.mailTemplateProvider.parse(templateData),
     });
 
     console.log('Message sent: %s', message.messageId);
