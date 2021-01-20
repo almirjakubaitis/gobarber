@@ -9,4 +9,5 @@ tmp/*
 
 ormconfig.raspiberrypi.json
 ormconfig.json
+coverage
 

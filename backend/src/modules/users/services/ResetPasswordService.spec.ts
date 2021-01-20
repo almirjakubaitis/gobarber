@@ -56,15 +56,15 @@ describe('SendForgotPasswordEmail', () => {
     ).rejects.toBeInstanceOf(AppError);
   });
 
-  it('should not be able to reset a user password with a non-existing user', async () => {
+  it('should not be able to reset the password with a non-existing user', async () => {
     const { token } = await fakeUserTokensRepository.generate(
-      'non-existing-user-token',
+      'non-existing-user',
     );
 
     await expect(
       resetPassword.execute({
-        password: 'password',
         token,
+        password: '123456',
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
