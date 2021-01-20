@@ -1,31 +1,31 @@
-// import 'reflect-metadata';
-
 import AppError from '@shared/errors/AppError';
+
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeUserTokensRepository from '@modules/users/repositories/fakes/FakeUserTokensRepository';
-
 import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
+
 import ResetPasswordService from './ResetPasswordService';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakeUserTokensRepository: FakeUserTokensRepository;
-let resetPassword: ResetPasswordService;
 let fakeHashProvider: FakeHashProvider;
 
-describe('SendForgotPasswordEmail', () => {
+let resetPassword: ResetPasswordService;
+
+describe('ResetPasswordService', () => {
   beforeEach(() => {
     fakeUsersRepository = new FakeUsersRepository();
     fakeUserTokensRepository = new FakeUserTokensRepository();
     fakeHashProvider = new FakeHashProvider();
-  });
 
-  it('should be able to reset a user password', async () => {
     resetPassword = new ResetPasswordService(
       fakeUsersRepository,
       fakeUserTokensRepository,
       fakeHashProvider,
     );
+  });
 
+  it('should be able to reset a user password', async () => {
     const user = await fakeUsersRepository.create({
       name: 'MyName',
       email: 'myemail@google.com',
