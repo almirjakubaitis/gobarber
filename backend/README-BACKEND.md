@@ -92,3 +92,9 @@
 git rm --cached newfile
 
 git rm --cached ormconfig.json
+
+git rm -r --cached .
+
+git add .
+
+git add -A
