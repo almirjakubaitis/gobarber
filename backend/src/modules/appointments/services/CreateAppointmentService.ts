@@ -37,6 +37,7 @@ class CreateAppointmentService {
     const appointmentDate = startOfHour(date);
 
     if (isBefore(appointmentDate, Date.now())) {
+      // console.log(new Date(Date.now()));
       throw new AppError("You can't create an appointment on a past date.");
     }
 

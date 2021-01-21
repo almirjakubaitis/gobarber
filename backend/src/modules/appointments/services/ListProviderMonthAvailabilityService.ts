@@ -23,7 +23,7 @@ type IResponse = Array<{
 @injectable()
 export default class ListProviderMonthAvailabilityService {
   constructor(
-    @inject('UsersRepository')
+    @inject('AppointmentsRepository')
     private appointmentsRepository: IAppointmentsRepository,
   ) {}
 
@@ -60,7 +60,8 @@ export default class ListProviderMonthAvailabilityService {
       };
     });
 
-    // return [{ day: 1, available: false }];
     return availability;
+
+    // return [{ day: 1, available: false }];
   }
 }
