@@ -5,6 +5,9 @@ import ListProviderMonthAvailabilityService from './ListProviderMonthAvailabilit
 let fakeAppointmentsRepository: FakeAppointmentsRepository;
 let listProviderMonthAvailability: ListProviderMonthAvailabilityService;
 
+const providerId = '039390-he3009';
+const userID = '09440-8888';
+
 describe('ListProviderMonthAvailability', () => {
   beforeEach(() => {
     fakeAppointmentsRepository = new FakeAppointmentsRepository();
@@ -15,62 +18,73 @@ describe('ListProviderMonthAvailability', () => {
 
   it('should be able to list the month ability from provider', async () => {
     await fakeAppointmentsRepository.create({
-      provider_id: 'user',
+      provider_id: providerId,
+      user_id: userID,
       date: new Date(2021, 4, 20, 8, 0, 0),
     }); // abril
 
     await fakeAppointmentsRepository.create({
-      provider_id: 'user',
+      provider_id: providerId,
+      user_id: userID,
       date: new Date(2021, 4, 20, 9, 0, 0),
     }); // maio
 
     await fakeAppointmentsRepository.create({
-      provider_id: 'user',
+      provider_id: providerId,
+      user_id: userID,
       date: new Date(2021, 4, 20, 10, 0, 0),
     }); // maio
 
     await fakeAppointmentsRepository.create({
-      provider_id: 'user',
+      provider_id: providerId,
+      user_id: userID,
       date: new Date(2021, 4, 20, 11, 0, 0),
     }); // maio
 
     await fakeAppointmentsRepository.create({
-      provider_id: 'user',
+      provider_id: providerId,
+      user_id: userID,
       date: new Date(2021, 4, 20, 12, 0, 0),
     }); // maio
 
     await fakeAppointmentsRepository.create({
-      provider_id: 'user',
+      provider_id: providerId,
+      user_id: userID,
       date: new Date(2021, 4, 20, 13, 0, 0),
     }); // maio
 
     await fakeAppointmentsRepository.create({
-      provider_id: 'user',
+      provider_id: providerId,
+      user_id: userID,
       date: new Date(2021, 4, 20, 14, 0, 0),
     }); // maio
 
     await fakeAppointmentsRepository.create({
-      provider_id: 'user',
+      provider_id: providerId,
+      user_id: userID,
       date: new Date(2021, 4, 20, 15, 0, 0),
     }); // maio
 
     await fakeAppointmentsRepository.create({
-      provider_id: 'user',
+      provider_id: providerId,
+      user_id: userID,
       date: new Date(2021, 4, 20, 16, 0, 0),
     }); // maio
 
     await fakeAppointmentsRepository.create({
-      provider_id: 'user',
+      provider_id: providerId,
+      user_id: userID,
       date: new Date(2021, 4, 20, 17, 0, 0),
     }); // maio
 
     await fakeAppointmentsRepository.create({
-      provider_id: 'user',
+      provider_id: providerId,
+      user_id: userID,
       date: new Date(2021, 4, 21, 8, 0, 0),
     }); // maio
 
     const availability = await listProviderMonthAvailability.execute({
-      provider_id: 'user',
+      provider_id: providerId,
       year: 2021,
       month: 5, // abril
     });

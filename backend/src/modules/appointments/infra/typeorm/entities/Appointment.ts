@@ -34,6 +34,13 @@ class Appointment {
   // criar o relacionamento no model para poder acessar todos
   // os dados do usuario dentro do agendamento/appointments
 
+  @Column()
+  user_id: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
+
   @Column('time with time zone')
   date: Date;
 

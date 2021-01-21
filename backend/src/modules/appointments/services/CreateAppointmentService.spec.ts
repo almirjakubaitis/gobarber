@@ -12,6 +12,7 @@ let fakeAppointmentRepository: FakeAppointmentRepository;
 let createAppointmentService: CreateAppointmentService;
 
 const providerId = '039390-he3009';
+const userID = '09440-8888';
 
 describe('CreateAppointment', () => {
   // beforeEach(() => {});
@@ -26,6 +27,7 @@ describe('CreateAppointment', () => {
     const appointment = await createAppointmentService.execute({
       date: new Date(),
       provider_id: providerId,
+      user_id: userID,
     });
 
     // expect(appointment.provider_id).toBe('039390-he3009');
@@ -41,12 +43,14 @@ describe('CreateAppointment', () => {
     await createAppointmentService.execute({
       date: appointmentDate,
       provider_id: providerId,
+      user_id: userID,
     });
 
     await expect(
       createAppointmentService.execute({
         date: appointmentDate,
         provider_id: providerId,
+        user_id: userID,
       }),
     ).rejects.toBeInstanceOf(AppError);
   });

@@ -5,6 +5,9 @@ import ListProviderDayAvailabilityService from './ListProviderDayAvailabilitySer
 let fakeAppointmentsRepository: FakeAppointmentsRepository;
 let listProviderDayAvailability: ListProviderDayAvailabilityService;
 
+const providerId = '039390-he3009';
+const userID = '09440-8888';
+
 describe('ListProviderDayAvailability', () => {
   beforeEach(() => {
     fakeAppointmentsRepository = new FakeAppointmentsRepository();
@@ -15,17 +18,19 @@ describe('ListProviderDayAvailability', () => {
 
   it('should be able to list the month availability from provider', async () => {
     await fakeAppointmentsRepository.create({
-      provider_id: 'user',
+      provider_id: providerId,
+      user_id: userID,
       date: new Date(2021, 4, 20, 8, 0, 0),
     }); // abril
 
     await fakeAppointmentsRepository.create({
-      provider_id: 'user',
+      provider_id: providerId,
+      user_id: userID,
       date: new Date(2021, 4, 20, 10, 0, 0),
     }); // abril
 
     const availability = await listProviderDayAvailability.execute({
-      provider_id: 'user',
+      provider_id: providerId,
       year: 2021,
       month: 5, // abril
       day: 20,
@@ -50,12 +55,14 @@ describe('ListProviderDayAvailability', () => {
 
   it('should not be availability to list an older hour as available from provider', async () => {
     await fakeAppointmentsRepository.create({
-      provider_id: 'user',
+      provider_id: providerId,
+      user_id: userID,
       date: new Date(2021, 4, 20, 14, 0, 0),
     }); // abril
 
     await fakeAppointmentsRepository.create({
-      provider_id: 'user',
+      provider_id: providerId,
+      user_id: userID,
       date: new Date(2021, 4, 20, 15, 0, 0),
     }); // abril
 
@@ -65,7 +72,7 @@ describe('ListProviderDayAvailability', () => {
     // mockImplementationOnce - somente uma vez
 
     const availability = await listProviderDayAvailability.execute({
-      provider_id: 'user',
+      provider_id: providerId,
       year: 2021,
       month: 5, // abril
       day: 20,
