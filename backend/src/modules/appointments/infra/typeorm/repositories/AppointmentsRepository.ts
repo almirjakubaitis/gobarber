@@ -1,7 +1,8 @@
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Repository, Raw } from 'typeorm';
 
 import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
 import ICreateAppointmentDTO from '@modules/appointments/dtos/ICreateAppointmentDTO';
+import IFindAllMonthFromProviderDTO from '@modules/appointments/dtos/IFindAllMonthFromProviderDTO';
 
 import Appointment from '@modules/appointments/infra/typeorm/entities/Appointment';
 
@@ -22,6 +23,28 @@ class AppointmentsRepository implements IAppointmentsRepository {
     });
 
     return findAppointment || undefined;
+  }
+
+  public async findAllMonthFromProvider({
+    provider_id,
+    month,
+    year,
+  }: IFindAllMonthFromProviderDTO): Promise<Appointment[]> {
+    const parsedMonth = String(month).padStart(2, '0');
+    // Se o mês não tiver 2 digitos a função padStart irá preencher o zero na frete - start
+
+    const appointments = await this.ormRepository.find({
+      where: {
+        provider_id,
+        date: Raw(
+          dateFieldName =>
+            `to_char(${dateFieldName},'MM-YYYY') = '${parsedMonth}-${year}'`,
+          // na função do Postgres to_char o mes é retorno com o zero na frente
+        ),
+      },
+    });
+
+    return appointments;
   }
 
   public async create({
