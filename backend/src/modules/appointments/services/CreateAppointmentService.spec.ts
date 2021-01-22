@@ -4,11 +4,15 @@
 // });
 import AppError from '@shared/errors/AppError';
 import FakeAppointmentRepository from '@modules/appointments/repositories/fakes/FakeAppointmentsRepository';
+import FakeNotificationsRepository from '@modules/notifications/repositories/fakes/FakesNotificationRepository';
+
 import CreateAppointmentService from './CreateAppointmentService';
 
 // describe('categoria de testes')
 
 let fakeAppointmentRepository: FakeAppointmentRepository;
+let fakeNotificationsRepository: FakeNotificationsRepository;
+
 let createAppointmentService: CreateAppointmentService;
 
 const providerId = '039390-he3009';
@@ -18,8 +22,11 @@ describe('CreateAppointment', () => {
   // beforeEach(() => {});
   beforeEach(() => {
     fakeAppointmentRepository = new FakeAppointmentRepository();
+    fakeNotificationsRepository = new FakeNotificationsRepository();
+
     createAppointmentService = new CreateAppointmentService(
       fakeAppointmentRepository,
+      fakeNotificationsRepository,
     );
   });
 
