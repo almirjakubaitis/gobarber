@@ -1,3 +1,4 @@
-import { createConnection } from 'typeorm';
+import { createConnections } from 'typeorm';
 
-createConnection();
+// createConnection(); // para uma única conecção
+createConnections();
