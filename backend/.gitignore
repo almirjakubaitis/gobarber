@@ -8,6 +8,10 @@ tmp/*
 !tmp/.gitkeep
 
 ormconfig.raspiberrypi.json
+ormconfig.bitnami.json
 ormconfig.json
 coverage
+
+.env
+
 

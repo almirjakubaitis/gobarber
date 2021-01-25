@@ -2,10 +2,10 @@
   {
     "name": "default",
     "type": "postgres",
-    "host": "192.168.100.209",
+    "host": "localhost",
     "port": 5432,
     "username": "postgres",
-    "password": "docker",
+    "password": "password_of_database",
     "database": "gostack_gobarber",
     "entities": [
       "./src/modules/**/infra/typeorm/entities/*.ts"
@@ -20,7 +20,7 @@
   {
     "name": "mongo",
     "type": "mongodb",
-    "host": "192.168.100.209",
+    "host": "localhost",
     "port": 27017,
     "database": "gostack_gobarber",
     "useUnifiedTopology": true,
