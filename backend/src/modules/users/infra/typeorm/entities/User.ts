@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 
 import { Exclude, Expose } from 'class-transformer';
+import uploadConfig from '@config/upload';
 
 // Entity no typeorm é um model que será salvo no database
 
@@ -36,9 +37,22 @@ class User {
 
   @Expose({ name: 'avatar_url' })
   getAvatar_url(): string | null {
-    return this.avatar
-      ? `${process.env.APP_API_URL}/files/${this.avatar}`
-      : null;
+    if (!this.avatar) {
+      return null;
+    }
+
+    switch (uploadConfig.driver) {
+      case 'disk':
+        return `${process.env.APP_API_URL}/files/${this.avatar}`;
+      case 's3':
+        return `https://${uploadConfig.config.aws.bucket}.s3.amazonaws.com/${this.avatar}`;
+      default:
+        return null;
+    }
+
+    // return this.avatar
+    //   ? `${process.env.APP_API_URL}/files/${this.avatar}`
+    //   : null;
   }
 }
 
