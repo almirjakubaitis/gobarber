@@ -8,6 +8,8 @@ import IAppointmentsRepository from '@modules/appointments/repositories/IAppoint
 
 import INotificationsRepository from '@modules/notifications/repositories/INotificationsRepository';
 
+import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
+
 // [x] Recebimento das informações
 // [x] Tratativa de erros/excesões
 // [x] Acesso ao repositório
@@ -32,6 +34,9 @@ class CreateAppointmentService {
 
     @inject('NotificationsRepository')
     private notificationsRepository: INotificationsRepository,
+
+    @inject('CacheProvider')
+    private cacheProvider: ICacheProvider,
   ) {}
 
   public async execute({
@@ -40,6 +45,11 @@ class CreateAppointmentService {
     date,
   }: IRequest): Promise<Appointment> {
     const appointmentDate = startOfHour(date);
+
+    const cacheKey = `providers-appointments:${provider_id}-${format(
+      appointmentDate,
+      'yyyy-M-d',
+    )}`;
 
     if (isBefore(appointmentDate, Date.now())) {
       // console.log(new Date(Date.now()));
@@ -74,6 +84,10 @@ class CreateAppointmentService {
       recipient_id: provider_id,
       content: `Novo agendamento para dia ${dateFormated}`,
     });
+
+    await this.cacheProvider.invalidate(cacheKey);
+
+    //  console.log(cacheKey);
 
     return appointment;
   }

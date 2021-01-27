@@ -9,15 +9,23 @@
     "baseUrl": "./src",
     "allowJs": true,
     "paths": {
-    "@modules/*":["modules/*"],
-    "@config/*":["config/*"],
-    "@shared/*":["shared/*"],
-    "@providers/*":["shared/container/providers/*"]
+      "@modules/*": [
+        "modules/*"
+      ],
+      "@config/*": [
+        "config/*"
+      ],
+      "@shared/*": [
+        "shared/*"
+      ],
+      "@providers/*": [
+        "shared/container/providers/*"
+      ]
     },
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-  "skipLibCheck": true,
+    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   }
 }
