@@ -1,9 +1,11 @@
 // import AppError from '@shared/errors/AppError';
 import FakeAppointmentsRepository from '@modules/appointments/repositories/fakes/FakeAppointmentsRepository';
+import FakeCacheProvider from '@providers/CacheProvider/fakes/FakeCacheProvider';
 import ListProviderAppopintmentsService from './ListProviderAppointmentsService';
 
 let fakeAppointmentsRepository: FakeAppointmentsRepository;
 let listProviderAppopintments: ListProviderAppopintmentsService;
+let fakeCacheProvider: FakeCacheProvider;
 
 const providerId = '039390-he3009';
 const userID = '09440-8888';
@@ -11,8 +13,11 @@ const userID = '09440-8888';
 describe('ListProviderAppopintments', () => {
   beforeEach(() => {
     fakeAppointmentsRepository = new FakeAppointmentsRepository();
+    fakeCacheProvider = new FakeCacheProvider();
+
     listProviderAppopintments = new ListProviderAppopintmentsService(
       fakeAppointmentsRepository,
+      fakeCacheProvider,
     );
   });
 

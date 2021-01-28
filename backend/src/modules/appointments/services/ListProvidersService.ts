@@ -1,10 +1,8 @@
 import { injectable, inject } from 'tsyringe';
 import { classToClass } from 'class-transformer';
 
-import IUsersRepository from '@modules/users/repositories/IUsersRepository';
-
 import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
-
+import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import User from '@modules/users/infra/typeorm/entities/User';
 
 interface IRequest {
@@ -27,7 +25,9 @@ export default class ListProviderService {
     );
 
     if (!users) {
-      users = await this.usersRepository.findAllProviders({});
+      users = await this.usersRepository.findAllProviders({
+        except_user_id: user_id,
+      });
 
       // console.log('A query no banco foi feita');
 
