@@ -98,3 +98,8 @@ git rm -r --cached .
 git add .
 
 git add -A
+
+
+# CLASSTOCLASS
+Inserir no Controler
+e no Service ao salvar o cache no Redis
