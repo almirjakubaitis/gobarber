@@ -18,9 +18,12 @@ class AppointmentsRepository implements IAppointmentsRepository {
     this.ormRepository = getRepository(Appointment);
   }
 
-  public async findByDate(date: Date): Promise<Appointment | undefined> {
+  public async findByDate(
+    date: Date,
+    provider_id: string,
+  ): Promise<Appointment | undefined> {
     const findAppointment = await this.ormRepository.findOne({
-      where: { date },
+      where: { date, provider_id },
     });
 
     return findAppointment || undefined;
@@ -40,6 +43,7 @@ class AppointmentsRepository implements IAppointmentsRepository {
         date: Raw(
           dateFieldName =>
             `to_char(${dateFieldName},'MM-YYYY') = '${parsedMonth}-${year}'`,
+          // o método Raw do typeorm acessa uma função direta do database (no caso o Postgres)
           // na função do Postgres to_char o mes é retorno com o zero na frente
         ),
       },
@@ -67,6 +71,7 @@ class AppointmentsRepository implements IAppointmentsRepository {
           // na função do Postgres to_char o mes é retorno com o zero na frente
         ),
       },
+      relations: ['user'],
     });
 
     return appointments;
