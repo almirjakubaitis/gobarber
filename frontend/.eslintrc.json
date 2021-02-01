@@ -41,6 +41,7 @@
       "no-use-before-define": "off", // was removed because error in react
       "react/jsx-filename-extension": [1, { "extensions": [".tsx"] }],
       "import/prefer-default-export": "off",
+      "import/no-duplicates": "off",
       "@typescript-eslint/explicit-function-return-type": [
         "error",
         {
