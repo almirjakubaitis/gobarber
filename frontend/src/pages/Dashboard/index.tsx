@@ -4,7 +4,7 @@ import 'react-day-picker/lib/style.css';
 
 import { FiClock, FiPower } from 'react-icons/fi';
 
-import { isToday, format } from 'date-fns';
+import { isToday, format, parseISO } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 
 import {
@@ -32,6 +32,7 @@ interface monthAvailabilityItem {
 interface Appointment {
   id: string;
   date: string;
+  hourFormatted: string;
   user: {
     name: string;
     avatar_url: string;
@@ -77,7 +78,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     api
-      .get('/appointments/me', {
+      .get<Appointment[]>('/appointments/me', {
         params: {
           year: selectedDate.getFullYear(),
           month: selectedDate.getMonth() + 1,
@@ -85,9 +86,16 @@ const Dashboard: React.FC = () => {
         },
       })
       .then(response => {
-        setApointments(response.data);
+        const appointmentsFormatted = response.data.map(appointment => {
+          return {
+            ...appointment,
+            hourFormatted: format(parseISO(appointment.date), 'HH:mm'),
+          };
+        });
 
-        console.log(response.data);
+        setApointments(appointmentsFormatted);
+
+        // console.log(response.data);
       });
   }, [selectedDate]);
 
@@ -114,6 +122,19 @@ const Dashboard: React.FC = () => {
       locale: ptBR,
     });
   }, [selectedDate]);
+
+  const mormingAppointments = useMemo(() => {
+    return appointments.filter(appointment => {
+      // console.log(parseISO(appointment.date).getHours() < 12);
+      return parseISO(appointment.date).getHours() < 12;
+    });
+  }, [appointments]);
+
+  const afternoonAppointments = useMemo(() => {
+    return appointments.filter(appointment => {
+      return parseISO(appointment.date).getHours() >= 12;
+    });
+  }, [appointments]);
 
   return (
     <Container>
@@ -161,66 +182,43 @@ const Dashboard: React.FC = () => {
           <Section>
             <strong>Manhã</strong>
 
-            <Appointment>
-              <span>
-                <FiClock />
-                08:00
-              </span>
-
-              <div>
-                <img
-                  src="https://xesque.rocketseat.dev/users/avatar/profile-feda561b-f903-42ac-8bcb-70a4a9a5cb7d.jpg"
-                  alt="Almir Jakubaitis"
-                />
-                <strong>Almir Jakubaitis</strong>
+            {mormingAppointments.map(appointment => (
+              <Appointment key={appointment.id}>
                 <span>
                   <FiClock />
-                  08:00
+                  {appointment.hourFormatted}
                 </span>
-              </div>
-            </Appointment>
 
-            <Appointment>
-              <span>
-                <FiClock />
-                08:00
-              </span>
-
-              <div>
-                <img
-                  src="https://xesque.rocketseat.dev/users/avatar/profile-feda561b-f903-42ac-8bcb-70a4a9a5cb7d.jpg"
-                  alt="Almir Jakubaitis"
-                />
-                <strong>Almir Jakubaitis</strong>
-                <span>
-                  <FiClock />
-                  08:00
-                </span>
-              </div>
-            </Appointment>
+                <div>
+                  <img
+                    src={appointment.user.avatar_url}
+                    alt={appointment.user.name}
+                  />
+                  <strong>{appointment.user.name}</strong>
+                </div>
+              </Appointment>
+            ))}
           </Section>
 
           <Section>
             <strong>Tarde</strong>
 
-            <Appointment>
-              <span>
-                <FiClock />
-                08:00
-              </span>
-
-              <div>
-                <img
-                  src="https://xesque.rocketseat.dev/users/avatar/profile-feda561b-f903-42ac-8bcb-70a4a9a5cb7d.jpg"
-                  alt="Almir Jakubaitis"
-                />
-                <strong>Almir Jakubaitis</strong>
+            {afternoonAppointments.map(appointment => (
+              <Appointment key={appointment.id}>
                 <span>
                   <FiClock />
-                  08:00
+                  {appointment.hourFormatted}
                 </span>
-              </div>
-            </Appointment>
+
+                <div>
+                  <img
+                    src={appointment.user.avatar_url}
+                    alt={appointment.user.name}
+                  />
+                  <strong>{appointment.user.name}</strong>
+                </div>
+              </Appointment>
+            ))}
           </Section>
         </Schedule>
         <Calendar>
