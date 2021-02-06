@@ -34,7 +34,6 @@ import {
   CreateAppoitmentButton,
   CreateAppoitmentButtonText,
 } from './styles';
-import {parseISO} from 'date-fns';
 
 interface RouteParams {
   providerId: string;
