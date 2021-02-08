@@ -1,7 +1,6 @@
 import React, {useCallback, useRef} from 'react';
 import {
   View,
-  Image,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
@@ -10,11 +9,11 @@ import {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
-
 import {useNavigation} from '@react-navigation/native';
 import {Form} from '@unform/mobile';
 import {FormHandles} from '@unform/core';
 import * as Yup from 'yup';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 import api from '../../services/api';
 
@@ -29,17 +28,20 @@ import {
   BackButton,
   UserAvatarButton,
   UserAvatar,
+  UserAvatarChangeIcon,
 } from './styles';
 import {useAuth} from '../../hooks/auth';
 
-interface SignInFormData {
+interface ProfileFormData {
   name: string;
   email: string;
+  old_password: string;
   password: string;
+  password_confirmation: string;
 }
 
 const Profile: React.FC = () => {
-  const {user} = useAuth();
+  const {user, updateUser} = useAuth();
 
   const formRef = useRef<FormHandles>(null);
   const navigation = useNavigation();
@@ -50,7 +52,7 @@ const Profile: React.FC = () => {
   const confirmPasswordInputRef = useRef<TextInput>(null);
 
   const handleSignUp = useCallback(
-    async (data: SignInFormData) => {
+    async (data: ProfileFormData) => {
       // console.log(data);
       try {
         formRef.current?.setErrors({});
@@ -60,19 +62,54 @@ const Profile: React.FC = () => {
           email: Yup.string()
             .required('E-mail obrigatório')
             .email('Digite um e-mail válido'),
-          password: Yup.string().required('Senha obrigatória'),
+          old_password: Yup.string(),
+          password: Yup.string().when('old_password', {
+            is: val => !!val.length,
+            then: Yup.string().required('Campo obrigatório'),
+            otherwise: Yup.string(),
+          }),
+          password_confirmation: Yup.string()
+            .when('old_password', {
+              is: val => !!val.length,
+              then: Yup.string().required('Campo obrigatório'),
+              otherwise: Yup.string(),
+            })
+            .oneOf([Yup.ref('password')], 'Confirmação incorreta'),
         });
 
         await schema.validate(data, {
           abortEarly: false,
         });
 
-        await api.post('/users', data);
+        const {
+          name,
+          email,
+          old_password,
+          password,
+          password_confirmation,
+        } = data;
 
-        Alert.alert(
-          'Cadastro realizado com sucesso!',
-          'Você já pode fazer login na aplicação.',
-        );
+        // Eslint converteu o Object.assing() para spred operator ...
+
+        const formData = {
+          name,
+          email,
+          ...(data.old_password
+            ? {
+                old_password,
+                password,
+                password_confirmation,
+              }
+            : {}),
+        };
+
+        const response = await api.put('/profile', formData);
+
+        console.log(response.data.user);
+
+        updateUser(response.data.user);
+
+        Alert.alert('Perfil atualizado com sucesso!');
 
         navigation.goBack();
       } catch (err) {
@@ -87,13 +124,46 @@ const Profile: React.FC = () => {
         // disparar um toast / Alert
 
         Alert.alert(
-          'Erro na autenticação',
-          'Ocorreu um erro ao fazer login, verifique as credenciais',
+          'Erro na atualização',
+          'Ocorreu um erro ao atualizar o perfil, tente novamente',
         );
       }
     },
-    [navigation],
+    [navigation, updateUser],
   );
+
+  const handleUpdateAvatar = useCallback(() => {
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+      },
+      response => {
+        if (response.didCancel) {
+          return;
+        }
+
+        if (response.errorMessage) {
+          Alert.alert('Erro ao atualizar seu avatar.');
+          return;
+        }
+
+        // const source = {uri: response.uri};
+
+        // console.log(source);
+
+        const data = new FormData();
+        data.append('avatar', {
+          type: 'image/jpeg',
+          name: `${user.id}.jpg`,
+          uri: response.uri,
+        });
+
+        api.patch('users/avatar', data).then(apiResponse => {
+          updateUser(apiResponse.data);
+        });
+      },
+    );
+  }, [user.id, updateUser]);
 
   const handleGoback = useCallback(() => {
     navigation.goBack();
@@ -103,17 +173,25 @@ const Profile: React.FC = () => {
     <>
       <KeyboardAvoidingView
         style={{flex: 1}}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         enabled>
         <ScrollView
           keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{flex: 1}}>
+          keyboardDismissMode="interactive"
+          contentContainerStyle={{
+            flex: 1,
+            justifyContent: 'flex-end',
+            paddingBottom: 60,
+          }}>
           <Container>
             <BackButton onPress={() => handleGoback()}>
               <Icon name="chevron-left" size={24} color="#999591" />
             </BackButton>
 
-            <UserAvatarButton onPress={() => {}}>
+            <UserAvatarButton onPress={() => handleUpdateAvatar()}>
+              <UserAvatarChangeIcon>
+                <Icon name="camera" size={24} color="#3e3b47" />
+              </UserAvatarChangeIcon>
               <UserAvatar source={{uri: user.avatar_url}} />
             </UserAvatarButton>
 
@@ -127,7 +205,7 @@ const Profile: React.FC = () => {
                 console.log(data);
               }}> */}
 
-            <Form ref={formRef} onSubmit={handleSignUp}>
+            <Form initialData={user} ref={formRef} onSubmit={handleSignUp}>
               <Input
                 name="name"
                 icon="user"
@@ -154,7 +232,7 @@ const Profile: React.FC = () => {
               />
               <Input
                 ref={oldPasswordInputRef}
-                name="old-password"
+                name="old_password"
                 icon="lock"
                 placeholder="Senha atual"
                 secureTextEntry
